@@ -61,7 +61,7 @@ public class NormalDistributionView extends JComponent implements ComponentListe
 
     public void update(CalculationType calculationType, double x) {
         this.currentX = x;
-        calculationType.calculateRectsPosition(x, rect1, rect2, getPreferredSize(), getSize());
+        calculationType.updateRectsPosition(x, rect1, rect2, getPreferredSize(), getSize());
 
         repaint();
     }

@@ -2,13 +2,19 @@ package rnormcalculator.gui;
 
 import rnormcalculator.gui.components.NormalDistributionView;
 import rnormcalculator.model.CalculationType;
+import rnormcalculator.model.delegator.InvalidResponseException;
+import rnormcalculator.model.delegator.RDelegator;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.event.ItemEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 
+
+/**
+ * The form where all the magic happens.
+ */
 public class MainFrame extends JFrame {
     private JPanel contentPane;
     private JSpinner mediaSpinner;
@@ -20,54 +26,86 @@ public class MainFrame extends JFrame {
     private JButton calcolaButton;
     private NormalDistributionView distributionView;
     private JSpinner xSpinner;
+    private JTextArea resultField;
+    private JButton copyButton;
 
+    /**
+     * The calculation type that's actually selected. It gets updated on selection.
+     */
     private CalculationType currentCalculationType;
 
+    private RDelegator delegator;
+
     public MainFrame() {
+        setTitle("R-norm distribution");
         setContentPane(contentPane);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        //Creating fields:
+        delegator = RDelegator.createFromEnvironment();
+        currentCalculationType = CalculationType.build(CalculationType.CALCULATION_TYPE_GREATER);
+
         //Binding spinners:
-        mediaSpinner   .setModel(getGenericNumericSpinnerModel());
-        varianzaSpinner.setModel(getGenericNumericSpinnerModel());
-        xSpinner       .setModel(getGenericNumericSpinnerModel());
+        mediaSpinner   .setModel(getGenericNumericSpinnerModel(0));
+        varianzaSpinner.setModel(getGenericNumericSpinnerModel(1));
+        xSpinner       .setModel(getGenericNumericSpinnerModel(1));
 
         //Button groups for calcualtion types
-        ButtonGroup calculationTypesGroupy = new ButtonGroup();
-        calculationTypesGroupy.add(prXMaggiore);
-        calculationTypesGroupy.add(prXMinore);
-        calculationTypesGroupy.add(prXInMezzo);
-        calculationTypesGroupy.add(prXEstremi);
+        ButtonGroup calculationTypesGroup = new ButtonGroup();
+        calculationTypesGroup.add(prXMaggiore);
+        calculationTypesGroup.add(prXMinore);
+        calculationTypesGroup.add(prXInMezzo);
+        calculationTypesGroup.add(prXEstremi);
 
-        calculationTypesGroupy.setSelected(prXMaggiore.getModel(), true);
+        calculationTypesGroup.setSelected(prXMaggiore.getModel(), true);
 
         //Adding listeners:
-
-        xSpinner.addChangeListener(new ChangeListener() {
+        addComponentListener(new ComponentAdapter() {
             @Override
-            public void stateChanged(ChangeEvent e) {
+            public void componentResized(ComponentEvent e) {
                 updateView();
             }
         });
 
-        currentCalculationType = CalculationType.build(CalculationType.CALCULATION_TYPE_GREATER);
+        xSpinner.addChangeListener(e -> updateView());
 
         prXMaggiore.addItemListener(getCalculationTypeChangeListener());
         prXMinore.addItemListener(  getCalculationTypeChangeListener());
         prXInMezzo.addItemListener( getCalculationTypeChangeListener());
         prXEstremi.addItemListener( getCalculationTypeChangeListener());
 
-        //Forcing view drawing
-        updateView();
+        copyButton.addActionListener(e -> resultField.copy());
+
+        calcolaButton.addActionListener(event -> {
+            try {
+                updateResultField("Sto contattando R...");
+
+                String function = currentCalculationType.generateRInstruction(getSelectedX(), getMedia(), getVarianza());
+                double result = delegator.delegate(function);
+
+                updateResultField(String.valueOf(result));
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                updateResultField("Errore: " + e.getMessage());
+            } catch (InvalidResponseException e) {
+                e.printStackTrace();
+
+                updateResultField("R ha risposto in maniera non corretta: " + e.getMessage());
+            } catch (Exception e) {
+                updateResultField("Si è verificato un errore imprevisto: " + e.getMessage());
+            }
+        });
+    }
+
+    private void updateResultField(String text) {
+        resultField.setText(text);
     }
 
     private ItemListener getCalculationTypeChangeListener() {
-        return new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                currentCalculationType = findSelectedCalculationType(e.getSource());
-                updateView();
-            }
+        return e -> {
+            currentCalculationType = findSelectedCalculationType(e.getSource());
+            updateView();
         };
     }
 
@@ -76,6 +114,8 @@ public class MainFrame extends JFrame {
     }
 
     private double getSelectedX() {
+        //This method is not called getX() because it would clash with the already existing getX() method that return
+        //the X position of this frame on the screen.
         return (double) xSpinner.getValue();
     }
 
@@ -91,7 +131,6 @@ public class MainFrame extends JFrame {
         } else {
             throw new RuntimeException("CalculationType not recognized!");
         }
-
     }
 
     private double getVarianza() {
@@ -102,17 +141,11 @@ public class MainFrame extends JFrame {
         return (double) mediaSpinner.getValue();
     }
 
-    private SpinnerNumberModel getGenericNumericSpinnerModel() {
-        return new SpinnerNumberModel(1, -5000, 5000, 0.1);
+    private SpinnerNumberModel getGenericNumericSpinnerModel(int defaultValue) {
+        return new SpinnerNumberModel(defaultValue, -5000, 5000, 0.1);
     }
 
-    public static void main(String[] args) {
-        MainFrame dialog = new MainFrame();
-        dialog.pack();
-        dialog.setVisible(true);
-    }
-
-    public CalculationType getCurrentCalculationType() {
+    private CalculationType getCurrentCalculationType() {
         return currentCalculationType;
     }
 }

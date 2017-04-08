@@ -10,12 +10,7 @@ import java.awt.*;
 public class OutsideCalculation extends CalculationType {
 
     @Override
-    public double calculateValue() {
-        return 0;
-    }
-
-    @Override
-    public void calculateRectsPosition(double x, Rectangle rect1, Rectangle rect2, Dimension imageDim, Dimension componentDim) {
+    public void updateRectsPosition(double x, Rectangle rect1, Rectangle rect2, Dimension imageDim, Dimension componentDim) {
         if (x >= 0) {
             rect1.x = DrawingUtils.findXPositionOnAxis(-x, imageDim, componentDim);
 
