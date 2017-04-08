@@ -26,7 +26,7 @@ public class MainFrame extends JFrame {
     private JButton calcolaButton;
     private NormalDistributionView distributionView;
     private JSpinner xSpinner;
-    private JTextArea resultField;
+    private JTextField resultField;
     private JButton copyButton;
 
     /**
