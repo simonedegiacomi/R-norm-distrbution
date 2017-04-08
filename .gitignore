@@ -1,0 +1,5 @@
+out/
+.idea/compiler.xml
+.idea/libraries/Gradle__junit_junit_4_12.xml
+.idea/libraries/Gradle__org_hamcrest_hamcrest_core_1_3.xml
+.idea/modules/
