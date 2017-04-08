@@ -3,6 +3,7 @@ package rnormcalculator.model;
 import rnormcalculator.utils.DrawingUtils;
 
 import java.awt.*;
+import java.util.Locale;
 
 /**
  * Created by Slava on 06/04/2017.
@@ -17,4 +18,11 @@ public class LesserThanCalculation extends CalculationType {
         //Rect2 is not used here
         DrawingUtils.hideRect(rect2);
     }
+
+    @Override
+    public String generateRInstruction(double x, double mean, double deviation) {
+        //The Locale.US here prevents the double from being parsed with "," as separator.
+        return String.format(Locale.UK,"pnorm(%f, %f, %f)", x, mean, deviation);
+    }
+
 }

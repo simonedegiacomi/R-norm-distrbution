@@ -6,7 +6,7 @@
       <xy x="48" y="54" width="618" height="478"/>
     </constraints>
     <properties>
-      <background color="-1180673"/>
+      
     </properties>
     <border type="none"/>
     <children>
@@ -24,20 +24,22 @@
             </constraints>
             <properties>
               <horizontalAlignment value="4"/>
-              <text value="σ² = Varianza"/>
+              <text value="σ = Deviazione standard"/>
             </properties>
           </component>
-          <component id="b98b2" class="javax.swing.JSpinner" binding="varianzaSpinner">
+          <component id="b98b2" class="javax.swing.JSpinner" binding="standardDeviationSpinner">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
-          <component id="9fa87" class="javax.swing.JSpinner" binding="mediaSpinner">
+          <component id="9fa87" class="javax.swing.JSpinner" binding="meanSpinner">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <enabled value="false"/>
+            </properties>
           </component>
           <component id="640d6" class="javax.swing.JLabel">
             <constraints>
@@ -81,7 +83,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="84a85" class="javax.swing.JRadioButton" binding="prXMaggiore">
+          <component id="84a85" class="javax.swing.JRadioButton" binding="prXGreater">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -89,7 +91,7 @@
               <text value="Pr(X&gt;=x)"/>
             </properties>
           </component>
-          <component id="e4b8" class="javax.swing.JRadioButton" binding="prXMinore">
+          <component id="e4b8" class="javax.swing.JRadioButton" binding="prXLesser">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -97,7 +99,7 @@
               <text value="Pr(X&lt;=x)"/>
             </properties>
           </component>
-          <component id="d9f02" class="javax.swing.JRadioButton" binding="prXInMezzo">
+          <component id="d9f02" class="javax.swing.JRadioButton" binding="prXBetween">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -105,7 +107,7 @@
               <text value="Pr(-x &lt;= X &lt;= x)"/>
             </properties>
           </component>
-          <component id="6c310" class="javax.swing.JRadioButton" binding="prXEstremi">
+          <component id="6c310" class="javax.swing.JRadioButton" binding="prXOutside">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

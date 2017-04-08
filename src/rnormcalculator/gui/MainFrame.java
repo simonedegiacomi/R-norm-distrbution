@@ -17,12 +17,12 @@ import java.io.IOException;
  */
 public class MainFrame extends JFrame {
     private JPanel contentPane;
-    private JSpinner mediaSpinner;
-    private JSpinner varianzaSpinner;
-    private JRadioButton prXMaggiore;
-    private JRadioButton prXMinore;
-    private JRadioButton prXInMezzo;
-    private JRadioButton prXEstremi;
+    private JSpinner meanSpinner;
+    private JSpinner standardDeviationSpinner;
+    private JRadioButton prXGreater;
+    private JRadioButton prXLesser;
+    private JRadioButton prXBetween;
+    private JRadioButton prXOutside;
     private JButton calcolaButton;
     private NormalDistributionView distributionView;
     private JSpinner xSpinner;
@@ -46,18 +46,18 @@ public class MainFrame extends JFrame {
         currentCalculationType = CalculationType.build(CalculationType.CALCULATION_TYPE_GREATER);
 
         //Binding spinners:
-        mediaSpinner   .setModel(getGenericNumericSpinnerModel(0));
-        varianzaSpinner.setModel(getGenericNumericSpinnerModel(1));
+        meanSpinner.setModel(getGenericNumericSpinnerModel(0));
+        standardDeviationSpinner.setModel(getGenericNumericSpinnerModel(1));
         xSpinner       .setModel(getGenericNumericSpinnerModel(1));
 
         //Button groups for calcualtion types
         ButtonGroup calculationTypesGroup = new ButtonGroup();
-        calculationTypesGroup.add(prXMaggiore);
-        calculationTypesGroup.add(prXMinore);
-        calculationTypesGroup.add(prXInMezzo);
-        calculationTypesGroup.add(prXEstremi);
+        calculationTypesGroup.add(prXGreater);
+        calculationTypesGroup.add(prXLesser);
+        calculationTypesGroup.add(prXBetween);
+        calculationTypesGroup.add(prXOutside);
 
-        calculationTypesGroup.setSelected(prXMaggiore.getModel(), true);
+        calculationTypesGroup.setSelected(prXGreater.getModel(), true);
 
         //Adding listeners:
         addComponentListener(new ComponentAdapter() {
@@ -69,10 +69,10 @@ public class MainFrame extends JFrame {
 
         xSpinner.addChangeListener(e -> updateView());
 
-        prXMaggiore.addItemListener(getCalculationTypeChangeListener());
-        prXMinore.addItemListener(  getCalculationTypeChangeListener());
-        prXInMezzo.addItemListener( getCalculationTypeChangeListener());
-        prXEstremi.addItemListener( getCalculationTypeChangeListener());
+        prXGreater.addItemListener(getCalculationTypeChangeListener());
+        prXLesser.addItemListener(  getCalculationTypeChangeListener());
+        prXBetween.addItemListener( getCalculationTypeChangeListener());
+        prXOutside.addItemListener( getCalculationTypeChangeListener());
 
         copyButton.addActionListener(e -> resultField.copy());
 
@@ -80,7 +80,7 @@ public class MainFrame extends JFrame {
             try {
                 updateResultField("Sto contattando R...");
 
-                String function = currentCalculationType.generateRInstruction(getSelectedX(), getMedia(), getVarianza());
+                String function = currentCalculationType.generateRInstruction(getSelectedX(), getMean(), getStandardDeviation());
                 double result = delegator.delegate(function);
 
                 updateResultField(String.valueOf(result));
@@ -120,25 +120,25 @@ public class MainFrame extends JFrame {
     }
 
     private CalculationType findSelectedCalculationType(Object source) {
-        if(prXMaggiore.equals(source)){
+        if(prXGreater.equals(source)){
             return CalculationType.build(CalculationType.CALCULATION_TYPE_GREATER);
-        } else if (prXMinore.equals(source)){
+        } else if (prXLesser.equals(source)){
             return CalculationType.build(CalculationType.CALCULATION_TYPE_LESSER);
-        } else if (prXInMezzo.equals(source)){
+        } else if (prXBetween.equals(source)){
             return CalculationType.build(CalculationType.CALCULATION_TYPE_BETWEEN);
-        } else if (prXEstremi.equals(source)){
+        } else if (prXOutside.equals(source)){
             return CalculationType.build(CalculationType.CALCULATION_TYPE_OUTSIDE);
         } else {
             throw new RuntimeException("CalculationType not recognized!");
         }
     }
 
-    private double getVarianza() {
-        return (double) varianzaSpinner.getValue();
+    private double getStandardDeviation() {
+        return (double) standardDeviationSpinner.getValue();
     }
 
-    private double getMedia() {
-        return (double) mediaSpinner.getValue();
+    private double getMean() {
+        return (double) meanSpinner.getValue();
     }
 
     private SpinnerNumberModel getGenericNumericSpinnerModel(int defaultValue) {
