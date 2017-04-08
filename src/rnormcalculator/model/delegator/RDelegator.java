@@ -74,7 +74,7 @@ public class RDelegator {
      * @return true if the result is in "[1] 0.02274985" format, false otherwise
      */
     private boolean isDirtyResultValid(String dirtyResult) {
-        return dirtyResult.matches("\\[[0-9]] [0-9]+\\.?[0-9]+");
+        return dirtyResult.matches("\\[[0-9]] [0-9]+\\.?[0-9]*");
     }
 
     private Double parseDirtyResult(String dirtyResult) {
