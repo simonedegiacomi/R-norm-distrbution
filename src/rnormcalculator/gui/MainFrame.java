@@ -39,6 +39,7 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         setTitle("R-norm distribution");
         setContentPane(contentPane);
+        setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //Creating fields:
