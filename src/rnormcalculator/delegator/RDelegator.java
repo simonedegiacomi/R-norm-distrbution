@@ -1,4 +1,4 @@
-package rnormcalculator.model.delegator;
+package rnormcalculator.delegator;
 
 import org.apache.commons.io.FileUtils;
 
@@ -19,8 +19,9 @@ public class RDelegator {
     /**
      * This method creates a new instance of the delegator, loaded with the configuration suitable to the operating
      * system that is currently being used.
+     * @throws ConfigurationInvalidException if the loaded configuration would prevent this software from working properly
      */
-    public static RDelegator createFromEnvironment() {
+    public static RDelegator createFromEnvironment() throws ConfigurationInvalidException {
         return new RDelegator(DelegatorConfig.createFromEnvironment());
     }
 

@@ -1,4 +1,4 @@
-package rnormcalculator.model.delegator;
+package rnormcalculator.delegator;
 
 /**
  * Created by Slava on 08/04/2017.

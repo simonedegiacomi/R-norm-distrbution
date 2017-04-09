@@ -1,9 +1,10 @@
 package rnormcalculator.gui;
 
+import rnormcalculator.delegator.ConfigurationInvalidException;
 import rnormcalculator.gui.components.NormalDistributionView;
 import rnormcalculator.model.CalculationType;
-import rnormcalculator.model.delegator.InvalidResponseException;
-import rnormcalculator.model.delegator.RDelegator;
+import rnormcalculator.delegator.InvalidResponseException;
+import rnormcalculator.delegator.RDelegator;
 
 import javax.swing.*;
 import java.awt.event.ComponentAdapter;
@@ -27,7 +28,6 @@ public class MainFrame extends JFrame {
     private NormalDistributionView distributionView;
     private JSpinner xSpinner;
     private JTextField resultField;
-    private JButton copyButton;
 
     /**
      * The calculation type that's actually selected. It gets updated on selection.
@@ -36,22 +36,24 @@ public class MainFrame extends JFrame {
 
     private RDelegator delegator;
 
-    public MainFrame() {
+    public MainFrame(RDelegator delegator) throws ConfigurationInvalidException {
+        //Binding delegator
+        this.delegator = delegator;
+
         setTitle("R-norm distribution");
         setContentPane(contentPane);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //Creating fields:
-        delegator = RDelegator.createFromEnvironment();
         currentCalculationType = CalculationType.build(CalculationType.CALCULATION_TYPE_GREATER);
 
         //Binding spinners:
-        meanSpinner.setModel(getGenericNumericSpinnerModel(0));
+        meanSpinner             .setModel(getGenericNumericSpinnerModel(0));
         standardDeviationSpinner.setModel(getGenericNumericSpinnerModel(1));
-        xSpinner       .setModel(getGenericNumericSpinnerModel(1));
+        xSpinner                .setModel(getGenericNumericSpinnerModel(1));
 
-        //Button groups for calcualtion types
+        //Button groups for calculation types
         ButtonGroup calculationTypesGroup = new ButtonGroup();
         calculationTypesGroup.add(prXGreater);
         calculationTypesGroup.add(prXLesser);
@@ -75,14 +77,12 @@ public class MainFrame extends JFrame {
         prXBetween.addItemListener( getCalculationTypeChangeListener());
         prXOutside.addItemListener( getCalculationTypeChangeListener());
 
-        copyButton.addActionListener(e -> resultField.copy());
-
         calcolaButton.addActionListener(event -> {
             try {
                 updateResultField("Sto contattando R...");
 
                 String function = currentCalculationType.generateRInstruction(getSelectedX(), getMean(), getStandardDeviation());
-                double result = delegator.delegate(function);
+                double result = this.delegator.delegate(function);
 
                 updateResultField(String.valueOf(result));
             } catch (IOException e) {
