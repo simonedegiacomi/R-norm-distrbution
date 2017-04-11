@@ -50,6 +50,10 @@ abstract class DelegatorConfig {
         DelegatorConfig config;
         if (SystemUtils.IS_OS_WINDOWS) {
             config = new WindowsConfig(configurationJson);
+        } else if (SystemUtils.IS_OS_MAC) {
+            config = new MacOsConfig(configurationJson);
+        } else if (SystemUtils.IS_OS_LINUX) {
+            config = new LinuxConfig(configurationJson);
         } else {
             //TODO: it would be nice to have a "GenericOSConfig" that just reads the data from the config file and still
             //tries to deal with it.
@@ -112,5 +116,81 @@ abstract class DelegatorConfig {
             return new ProcessBuilder(command);
         }
 
+    }
+
+    /**
+     * Configuration that is specified to mac os
+     */
+    private static class MacOsConfig extends DelegatorConfig {
+
+        private static final String defaultRPath = "/usr/local/bin/R";
+
+        private final String rPath;
+
+
+        MacOsConfig (JSONObject configurationJson) {
+            String executablePath = configurationJson.optString("executable-path");
+            if (executablePath.equals("")) {
+                rPath = defaultRPath;
+            } else {
+                rPath = executablePath;
+            }
+        }
+
+        @Override
+        protected void checkConfigurationIsValid() throws ConfigurationInvalidException {
+            File rRunnable = new File(rPath);
+            if (!rRunnable.exists()) {
+                throw new ConfigurationInvalidException( "Impossibile trovare RScript.exe! L'eseguibile è stato cercato al seguente percorso: \n" + rPath + "\n" +
+                        "Nel caso R sia stato installato in una cartella diversa, puoi indicarla nel file di " +
+                        "configurazione che si trova nella cartella di questo eseguibile.");
+            }
+        }
+
+        @Override
+        public ProcessBuilder generateProcessBuilder(File tempFile) {
+            // Specify arguments in different strings, otherwise java can't start r.
+            // The 'slave' is used to force r to print only the result, omitting the welcome message and
+            // the echo of the operation in the file
+            return new ProcessBuilder(rPath, "--slave", "-f", tempFile.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Configuration that is specified for linux
+     */
+    private static class LinuxConfig extends DelegatorConfig {
+
+        private static final String defaultRPath = "/usr/bin/R";
+
+        private final String rPath;
+
+
+        LinuxConfig (JSONObject configurationJson) {
+            String executablePath = configurationJson.optString("executable-path");
+            if (executablePath.equals("")) {
+                rPath = defaultRPath;
+            } else {
+                rPath = executablePath;
+            }
+        }
+
+        @Override
+        protected void checkConfigurationIsValid() throws ConfigurationInvalidException {
+            File rRunnable = new File(rPath);
+            if (!rRunnable.exists()) {
+                throw new ConfigurationInvalidException( "Impossibile trovare RScript.exe! L'eseguibile è stato cercato al seguente percorso: \n" + rPath + "\n" +
+                        "Nel caso R sia stato installato in una cartella diversa, puoi indicarla nel file di " +
+                        "configurazione che si trova nella cartella di questo eseguibile.");
+            }
+        }
+
+        @Override
+        public ProcessBuilder generateProcessBuilder(File tempFile) {
+            // Specify arguments in different strings, otherwise java can't start r.
+            // The 'slave' is used to force r to print only the result, omitting the welcome message and
+            // the echo of the operation in the file
+            return new ProcessBuilder(rPath, "--slave", "-f", tempFile.getAbsolutePath());
+        }
     }
 }
