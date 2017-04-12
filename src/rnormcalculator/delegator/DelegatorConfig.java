@@ -141,7 +141,7 @@ abstract class DelegatorConfig {
         protected void checkConfigurationIsValid() throws ConfigurationInvalidException {
             File rRunnable = new File(rPath);
             if (!rRunnable.exists()) {
-                throw new ConfigurationInvalidException( "Impossibile trovare RScript.exe! L'eseguibile è stato cercato al seguente percorso: \n" + rPath + "\n" +
+                throw new ConfigurationInvalidException( "Impossibile trovare RScript! L'eseguibile è stato cercato al seguente percorso: \n" + rPath + "\n" +
                         "Nel caso R sia stato installato in una cartella diversa, puoi indicarla nel file di " +
                         "configurazione che si trova nella cartella di questo eseguibile.");
             }
@@ -179,7 +179,7 @@ abstract class DelegatorConfig {
         protected void checkConfigurationIsValid() throws ConfigurationInvalidException {
             File rRunnable = new File(rPath);
             if (!rRunnable.exists()) {
-                throw new ConfigurationInvalidException( "Impossibile trovare RScript.exe! L'eseguibile è stato cercato al seguente percorso: \n" + rPath + "\n" +
+                throw new ConfigurationInvalidException( "Impossibile trovare RScript! L'eseguibile è stato cercato al seguente percorso: \n" + rPath + "\n" +
                         "Nel caso R sia stato installato in una cartella diversa, puoi indicarla nel file di " +
                         "configurazione che si trova nella cartella di questo eseguibile.");
             }
